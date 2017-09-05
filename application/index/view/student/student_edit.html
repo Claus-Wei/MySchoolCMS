@@ -1,0 +1,130 @@
+{extend name='public/base'/}
+{block name='header'}{/block} {//关掉头部}
+{block name='menu'}{/block} {//关掉菜单}
+{block name='seo'}
+<title>{$title|default="标题"}</title>
+<meta name="keywords" content="{$keywords|default='关键字'}">
+<meta name="description" content="{$desc|default='描述'}">
+{/block}
+
+{block name='content'}
+
+<article class="cl pd-20">
+	<form class="form form-horizontal" id="form">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">用户名：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$student_info.name}" placeholder="" id="username" name="username">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">性别：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<select class="select" name="sex" size="1">
+					<option value="" selected>{$student_info.sex}</option>
+					<option value="0" >男</option>
+					<option value="1" >女</option>
+					<option value="2" >保密</option>
+
+				</select>
+				</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">手机：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$student_info.mobile}" placeholder="" id="mobile" name="mobile">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">邮箱：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$student_info.email}" placeholder="" name="email" id="email">
+			</div>
+		</div>
+		
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">所在城市：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px">
+				<select class="select" size="1" name="city">
+					<option value="" selected>{$student_info.city}</option>
+					<option value="beijing">北京</option>
+					<option value="shanghai">上海</option>
+					<option value="guangzhou">广州</option>
+					<option value="shenzhen">深圳</option>
+					<option value="hangzhou">杭州</option>
+					<option value="tianjin">天津</option>
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">班级：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<select class="select" name="grade_id" size="1">
+					<option value="" selected>{$student_info.grade.name}</option>
+					{volist name='list' id='vo'}
+					<option value="{$vo.id}" >{$vo.name}</option>
+					{/volist}
+
+				</select>
+				</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">备注：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<textarea name="remark" cols="" rows="" class="textarea" value=""  onKeyUp="textarealength(this,100)">{$student_info.remark}</textarea>
+				<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+			</div>
+		</div>
+
+		<!--将当前记录的id做为隐藏域发送到服务器-->
+		<input type="hidden" value="{$student_info.id}" name="id">
+
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius " id="submit" type="button" value="提交"  >
+			</div>
+		</div>
+	</form>
+</article>
+
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/jquery.validate.js"></script> 
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/validate-methods.js"></script> 
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script>
+	$(function(){
+
+	    $("form").children().change(function(){
+	    $("#submit").removeClass('disabled');
+	    });
+
+        $("#submit").on("click", function(event){
+            $.ajax({
+				type: "POST",
+				url: "{:url('student/doEdit')}",
+				data: $("form").serialize(),
+				dataType: "json",
+				success: function(data){
+				    if (data.status == 1) {
+						alert(data.message);
+						window.location.href="student/studentlist";
+
+					} else {
+                        alert(data.message);
+
+					}
+				}
+			});
+
+		})
+
+	})
+
+</script> 
+<!--/请在上方写此页面业务相关的脚本-->
+{/block}
+</body>
+</html>
